@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { FeatureOptionsService } from './feature-options.service';
 import { CreateFeatureOptionDto } from './dto/create-feature-option.dto';
 import { UpdateFeatureOptionDto } from './dto/update-feature-option.dto';
@@ -19,16 +19,16 @@ export class FeatureOptionsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.featureOptionsService.findOne(+id);
+    return this.featureOptionsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateFeatureOptionDto: UpdateFeatureOptionDto) {
-    return this.featureOptionsService.update(+id, updateFeatureOptionDto);
+    return this.featureOptionsService.update(id, updateFeatureOptionDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.featureOptionsService.remove(+id);
+    return this.featureOptionsService.remove(id);
   }
 }

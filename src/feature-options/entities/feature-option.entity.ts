@@ -4,7 +4,7 @@ import { Column, CreateDateColumn, Entity, Index, ObjectId, ObjectIdColumn, Upda
 @Index(['category', 'value'], { unique: true })
 export class FeatureOption {
     @ObjectIdColumn()
-    id: ObjectId
+    _id: ObjectId
 
     @Column()
     category: string

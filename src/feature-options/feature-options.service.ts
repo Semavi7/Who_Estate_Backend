@@ -1,9 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFeatureOptionDto } from './dto/create-feature-option.dto';
 import { UpdateFeatureOptionDto } from './dto/update-feature-option.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FeatureOption } from './entities/feature-option.entity';
 import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class FeatureOptionsService {
@@ -35,15 +36,37 @@ export class FeatureOptionsService {
     }, {} as Record<string, string[]>)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} featureOption`;
+  async findOne(id: string): Promise<FeatureOption> {
+    const findOption = await this.featureOptionRepository.findOneBy({ _id: new ObjectId(id) })
+    if (!findOption) {
+      throw new NotFoundException('Özellik bulunamadı')
+    }
+    return findOption
   }
 
-  update(id: number, updateFeatureOptionDto: UpdateFeatureOptionDto) {
-    return `This action updates a #${id} featureOption`;
+  async update(id: string, updateFeatureOptionDto: UpdateFeatureOptionDto): Promise<FeatureOption> {
+    const existingOption = await this.featureOptionRepository.findOneBy({ _id: new ObjectId(id) })
+    if (!existingOption) {
+      throw new NotFoundException('Özellik bulunamadı')
+    }
+    if (updateFeatureOptionDto.category || updateFeatureOptionDto.value) {
+      const potentialDuplicate = await this.featureOptionRepository.findOneBy({
+        category: updateFeatureOptionDto.category || existingOption.category,
+        value: updateFeatureOptionDto.value || existingOption.value,
+      })
+      if (potentialDuplicate && potentialDuplicate._id.toHexString() !== id) {
+        throw new ConflictException('Güncelleme sonucunda başka bir özellikle aynı olacak. Lütfen farklı bir değer girin.');
+      }
+    }
+    this.featureOptionRepository.merge(existingOption, updateFeatureOptionDto)
+    return this.featureOptionRepository.save(existingOption)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} featureOption`;
+  async remove(id: string): Promise<{message: string}> {
+    const result = await this.featureOptionRepository.delete(new ObjectId(id))
+    if(result.affected === 0){
+      throw new NotFoundException('Özellik bulunamadı')
+    }
+    return { message: 'özellik başarı ile silindi'}
   }
 }
