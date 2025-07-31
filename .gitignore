@@ -8,3 +8,4 @@ dist/
 .env.test.local
 .env.production.local
 .env.local
+google-cloud-key.json
