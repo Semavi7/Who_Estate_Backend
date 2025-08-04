@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { PropertiesModule } from './properties/properties.module';
 import { Property } from './properties/entities/property.entity';
+import { MessagesModule } from './messages/messages.module';
+import { Message } from './messages/entities/message.entity';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { Property } from './properties/entities/property.entity';
       imports:[ConfigModule],
       useFactory: (configservice:ConfigService) => ({
         type: 'mongodb',
-        entities:[FeatureOption, Property],
+        entities:[FeatureOption, Property, Message],
         synchronize:true,
         url: configservice.get<string>('MONGO_URL')
       }),
@@ -24,7 +26,8 @@ import { Property } from './properties/entities/property.entity';
     }),
     FeatureOptionsModule,
     FileUploadModule,
-    PropertiesModule
+    PropertiesModule,
+    MessagesModule
   ],
   controllers: [AppController],
   providers: [AppService],
