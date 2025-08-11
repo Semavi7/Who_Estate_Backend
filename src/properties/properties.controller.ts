@@ -6,6 +6,7 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { categoryStructure } from './config/category-structure.config';
 import { FilterPropertyDto } from './dto/filter-property.dto';
+import { getCities, getDistrictsAndNeighbourhoodsByCityCode, getDistrictsAndNeighbourhoodsOfEachCity } from 'turkey-neighbourhoods';
 
 @Controller('properties')
 export class PropertiesController {
@@ -45,6 +46,17 @@ export class PropertiesController {
     @Query('distance', ParseFloatPipe) distance: number
   ){
     return this.propertiesService.findNear(lon, lat, distance)
+  }
+
+  @Get('adress')
+  getCities(){
+    return getCities()
+  }
+
+
+  @Get('adress/:id')
+  getDistrictsAndNeighbourhoodsByCityCode(@Param('id') id: string){
+    return getDistrictsAndNeighbourhoodsByCityCode(id)
   }
 
   @Get(':id')
