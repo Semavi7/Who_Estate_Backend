@@ -26,6 +26,10 @@ export class FeatureOptionsService {
     }
   }
 
+  async findAll(): Promise<FeatureOption[]> {
+    return await this.featureOptionRepository.find()
+  }
+
   async findAllGrouped(): Promise<Record<string, string[]>> {
     const allOptions = await this.featureOptionRepository.find()
     return allOptions.reduce((acc, option) => {

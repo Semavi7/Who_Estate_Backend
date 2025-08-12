@@ -13,8 +13,13 @@ export class FeatureOptionsController {
   }
 
   @Get()
-  findAll() {
+  findAllGrouped() {
     return this.featureOptionsService.findAllGrouped();
+  }
+
+  @Get('findall')
+  findAll() {
+    return this.featureOptionsService.findAll();
   }
 
   @Get(':id')
