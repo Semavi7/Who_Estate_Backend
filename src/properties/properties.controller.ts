@@ -29,9 +29,9 @@ export class PropertiesController {
     return this.propertiesService.findAll();
   }
 
-  @Get('category')
-  findAllCategory(@Query() fiterDto: FilterPropertyDto){
-    return this.propertiesService.findAllCategory(fiterDto)
+  @Get('query')
+  findAllCategory(@Query() queryParams: any){
+    return this.propertiesService.query(queryParams)
   }
 
   @Get('categories')

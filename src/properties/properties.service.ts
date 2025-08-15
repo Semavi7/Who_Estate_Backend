@@ -72,26 +72,25 @@ export class PropertiesService implements OnModuleInit {
     return this.propertyRepositories.find()
   }
 
-  async findAllCategory(filterDto: FilterPropertyDto): Promise<Property[]> {
-    const { propertyType, listingType, subType } = filterDto
+  async query(queryParams: any): Promise<Property[]> {
+    const where: FindOptionsWhere<Property> = {}
+    const numericFields = ['price', 'gross', 'net', 'buildingAge', 'floor', 'numberOfFloors', 'numberOfBathrooms', 'dues']
 
-    const whereClause: FindOptionsWhere<Property> = {}
-
-    if (propertyType) {
-      whereClause.propertyType = propertyType
+    for (const key in queryParams) {
+      if (Object.prototype.hasOwnProperty.call(queryParams, key)) {
+        const value = queryParams[key]
+        if (key === 'city' || key === 'district' || key === 'neighborhood') {
+          where[`location.${key}`] = value
+        }
+        else if (numericFields.includes(key)) {
+          where[key] = parseInt(value, 10);
+        }
+        else {
+          where[key] = value
+        }
+      }
     }
-    if (listingType) {
-      whereClause.listingType = listingType
-    }
-    if (subType) {
-      whereClause.subType = subType
-    }
-
-    const options: FindManyOptions<Property> = {
-      where: whereClause
-    }
-
-    return this.propertyRepositories.find(options)
+    return this.propertyRepositories.find({ where })
   }
 
   async findOne(id: string): Promise<Property> {
@@ -101,9 +100,9 @@ export class PropertiesService implements OnModuleInit {
   }
 
   async update(id: string, updateDto: UpdatePropertyDto, newFiles?: Express.Multer.File[]): Promise<Property> {
-    const existingProperty = await this.propertyRepositories.findOneBy({ _id: new ObjectId(id)})
+    const existingProperty = await this.propertyRepositories.findOneBy({ _id: new ObjectId(id) })
 
-    if(!existingProperty){
+    if (!existingProperty) {
       throw new NotFoundException('Bu ıd ye ait kayıt bulunamadı')
     }
 
@@ -112,12 +111,12 @@ export class PropertiesService implements OnModuleInit {
     const finalImageUrls = [...keptImageUrls, ...newImageUrls]
     existingProperty.images = finalImageUrls
 
-    for(const key in updateDto){
-      if(key !== 'existingImageUrls' && updateDto[key] !== undefined){
-        if(['location','selectedFeatures'].includes(key)){
+    for (const key in updateDto) {
+      if (key !== 'existingImageUrls' && updateDto[key] !== undefined) {
+        if (['location', 'selectedFeatures'].includes(key)) {
           existingProperty[key] = JSON.parse(updateDto[key])
         }
-        else{
+        else {
           existingProperty[key] = updateDto[key]
         }
       }
@@ -127,10 +126,10 @@ export class PropertiesService implements OnModuleInit {
 
   async remove(id: string): Promise<{ message: string }> {
     const result = await this.propertyRepositories.delete(new ObjectId(id))
-    if(result.affected === 0){
+    if (result.affected === 0) {
       throw new NotFoundException('Böyle bir Id bulunamadı')
     }
-    return { message: 'İlan başarı ile silindi'}
+    return { message: 'İlan başarı ile silindi' }
   }
 
   async findNear(lon: number, lat: number, distance: number): Promise<Property[]> {
