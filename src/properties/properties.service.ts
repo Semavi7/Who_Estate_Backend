@@ -85,6 +85,14 @@ export class PropertiesService implements OnModuleInit {
         else if (numericFields.includes(key)) {
           where[key] = parseInt(value, 10);
         }
+        else if (key === 'minNet' || key === 'minPrice') {
+          const field = key.substring(3).toLowerCase();
+          where[field] = { $gte: parseInt(value, 10) } as any;
+        } 
+        else if (key === 'maxNet' || key === 'maxPrice') {
+          const field = key.substring(3).toLowerCase();
+          where[field] = { ...where[field], $lte: parseInt(value, 10) } as any;
+        }
         else {
           where[key] = value
         }
