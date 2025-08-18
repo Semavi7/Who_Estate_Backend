@@ -87,7 +87,7 @@ export class PropertiesService implements OnModuleInit {
         else if (key === 'minNet' || key === 'minPrice') {
           const field = key.substring(3).toLowerCase();
           where[field] = { $gte: parseInt(value, 10) } as any;
-        } 
+        }
         else if (key === 'maxNet' || key === 'maxPrice') {
           const field = key.substring(3).toLowerCase();
           where[field] = { ...where[field], $lte: parseInt(value, 10) } as any;
@@ -149,10 +149,87 @@ export class PropertiesService implements OnModuleInit {
     })
   }
 
-  async findLastSix() {
+  async findLastSix(): Promise<Property[]> {
     return this.propertyRepositories.find({
-      order: { createdAt: 'DESC'},
+      order: { createdAt: 'DESC' },
       take: 6
     })
+  }
+
+  async getCurrentYearListingStats(): Promise<{ month: string; count: number }[]> {
+    const year = new Date().getFullYear()
+    const collection = this.propertyRepositories.manager.getMongoRepository(Property)
+
+    const result = await collection.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(`${year}-01-01T00:00:00Z`),
+            $lte: new Date(`${year}-12-31T23:59:59Z`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]).toArray();
+
+    // Eksik ayları sıfır ile dolduralım
+    const months = Array.from({ length: 12 }, (_, i) => {
+      const month = (i + 1).toString().padStart(2, "0")
+      const found = result.find(r => r._id === `${year}-${month}`)
+      return {
+        month: `${year}-${month}`,
+        count: found ? found.count : 0
+      }
+    })
+
+    return months
+  }
+
+  async countAll(): Promise<number> {
+    return this.propertyRepositories.count()
+  }
+
+  async getSubtypeAndTypePercentages(): Promise<any> {
+    const total = await this.propertyRepositories.count()
+
+    if (total === 0) {
+      return {
+        message: 'Database boş.'
+      };
+    }
+    const collection = this.propertyRepositories.manager.getMongoRepository(Property)
+    const daireCount = await collection.countDocuments({ subType: { $regex: "^Daire$", $options: "i" } })
+    const villaCount = await collection.countDocuments({ subType: { $regex: "^Villa$", $options: "i" } })
+    const dukkanCount = await collection.countDocuments({ subType: { $regex: "^Dükkan$", $options: "i" } })
+    const arsaCount = await collection.countDocuments({ propertyType: { $regex: "^Arsa$", $options: "i" } })
+
+    return [
+      {
+        name: "Daire",
+        value: (daireCount / total) * 100,
+        color: "#0088FE"
+      },
+      {
+        name: "Villa",
+        value: (villaCount / total) * 100,
+        color: "#00C49F"
+      },
+      {
+        name: "Dükkan",
+        value: (dukkanCount / total) * 100,
+        color: "#FFBB28"
+      },
+      {
+        name: "Arsa",
+        value: (arsaCount / total) * 100,
+        color: "#FF8042"
+      }
+    ]
   }
 }

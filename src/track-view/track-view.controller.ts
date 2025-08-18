@@ -10,5 +10,15 @@ export class TrackViewController {
     return this.trackViewService.create();
   }
 
+  @Get()
+  getCurrentYearStats() {
+    return this.trackViewService.getCurrentYearStats()
+  }
+
+  @Get('month')
+  getCurrentMonthTotalViews() {
+    return this.trackViewService.getCurrentMonthTotalViews()
+  }
+
   
 }

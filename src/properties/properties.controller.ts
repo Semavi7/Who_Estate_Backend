@@ -28,6 +28,17 @@ export class PropertiesController {
     return this.propertiesService.findAll();
   }
 
+  @Get('count')
+  async getCount(): Promise<{ total: number }> {
+    const total = await this.propertiesService.countAll()
+    return { total }
+  }
+
+  @Get('yearlistings')
+  getCurrentYearListingStats(){
+    return this.propertiesService.getCurrentYearListingStats()
+  }
+
   @Get('query')
   findAllCategory(@Query() queryParams: any) {
     return this.propertiesService.query(queryParams)
@@ -57,6 +68,10 @@ export class PropertiesController {
     return this.propertiesService.findLastSix()
   }
 
+  @Get('piechart')
+  getSubtypeAndTypePercentages() {
+    return this.propertiesService.getSubtypeAndTypePercentages()
+  }
 
   @Get('adress/:id')
   getDistrictsAndNeighbourhoodsByCityCode(@Param('id') id: string) {
