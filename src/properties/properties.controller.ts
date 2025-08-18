@@ -5,15 +5,14 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { categoryStructure } from './config/category-structure.config';
-import { FilterPropertyDto } from './dto/filter-property.dto';
-import { getCities, getDistrictsAndNeighbourhoodsByCityCode, getDistrictsAndNeighbourhoodsOfEachCity } from 'turkey-neighbourhoods';
+import { getCities, getDistrictsAndNeighbourhoodsByCityCode } from 'turkey-neighbourhoods';
 
 @Controller('properties')
 export class PropertiesController {
   constructor(
     private readonly propertiesService: PropertiesService,
     private readonly fileUploadService: FileUploadService
-  ) {}
+  ) { }
 
   @Post()
   @UseInterceptors(FilesInterceptor('images', 20))
@@ -30,12 +29,12 @@ export class PropertiesController {
   }
 
   @Get('query')
-  findAllCategory(@Query() queryParams: any){
+  findAllCategory(@Query() queryParams: any) {
     return this.propertiesService.query(queryParams)
   }
 
   @Get('categories')
-  getCategoryStructure(){
+  getCategoryStructure() {
     return categoryStructure
   }
 
@@ -44,18 +43,23 @@ export class PropertiesController {
     @Query('lon', ParseFloatPipe) lon: number,
     @Query('lat', ParseFloatPipe) lat: number,
     @Query('distance', ParseFloatPipe) distance: number
-  ){
+  ) {
     return this.propertiesService.findNear(lon, lat, distance)
   }
 
   @Get('adress')
-  getCities(){
+  getCities() {
     return getCities()
+  }
+
+  @Get('lastsix')
+  findLastSix() {
+    return this.propertiesService.findLastSix()
   }
 
 
   @Get('adress/:id')
-  getDistrictsAndNeighbourhoodsByCityCode(@Param('id') id: string){
+  getDistrictsAndNeighbourhoodsByCityCode(@Param('id') id: string) {
     return getDistrictsAndNeighbourhoodsByCityCode(id)
   }
 

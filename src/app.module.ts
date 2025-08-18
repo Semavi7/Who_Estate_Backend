@@ -10,6 +10,8 @@ import { PropertiesModule } from './properties/properties.module';
 import { Property } from './properties/entities/property.entity';
 import { MessagesModule } from './messages/messages.module';
 import { Message } from './messages/entities/message.entity';
+import { TrackViewModule } from './track-view/track-view.module';
+import { TrackView } from './track-view/entities/track-view.entity';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { Message } from './messages/entities/message.entity';
       imports:[ConfigModule],
       useFactory: (configservice:ConfigService) => ({
         type: 'mongodb',
-        entities:[FeatureOption, Property, Message],
+        entities:[FeatureOption, Property, Message, TrackView],
         synchronize:true,
         url: configservice.get<string>('MONGO_URL')
       }),
@@ -27,7 +29,8 @@ import { Message } from './messages/entities/message.entity';
     FeatureOptionsModule,
     FileUploadModule,
     PropertiesModule,
-    MessagesModule
+    MessagesModule,
+    TrackViewModule
   ],
   controllers: [AppController],
   providers: [AppService],

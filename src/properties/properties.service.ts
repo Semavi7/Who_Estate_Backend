@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { FindManyOptions, FindOptionsWhere, MongoRepository } from 'typeorm';
+import { FindOptionsWhere, MongoRepository } from 'typeorm';
 import { GeoPoint, Location, Property } from './entities/property.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
-import { FilterPropertyDto } from './dto/filter-property.dto';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
@@ -147,6 +146,13 @@ export class PropertiesService implements OnModuleInit {
           $nearSphere: { $geometry: { type: 'Point', coordinates: [lon, lat] }, $maxDistance: distance }
         }
       }
+    })
+  }
+
+  async findLastSix() {
+    return this.propertyRepositories.find({
+      order: { createdAt: 'DESC'},
+      take: 6
     })
   }
 }
