@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer";
 import { Column, CreateDateColumn, Entity, ObjectId, ObjectIdColumn, UpdateDateColumn } from "typeorm";
 
 export class GeoPoint{
@@ -14,7 +15,7 @@ export class Location{
 
 @Entity()
 export class Property {
-    @ObjectIdColumn() _id: ObjectId
+    @ObjectIdColumn() @Transform(({ value }) => value.toString(), { toPlainOnly: true }) _id: ObjectId
     @Column() title: string
     @Column() description: string
     @Column() price: number

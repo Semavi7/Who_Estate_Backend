@@ -12,6 +12,9 @@ import { MessagesModule } from './messages/messages.module';
 import { Message } from './messages/entities/message.entity';
 import { TrackViewModule } from './track-view/track-view.module';
 import { TrackView } from './track-view/entities/track-view.entity';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -20,7 +23,7 @@ import { TrackView } from './track-view/entities/track-view.entity';
       imports:[ConfigModule],
       useFactory: (configservice:ConfigService) => ({
         type: 'mongodb',
-        entities:[FeatureOption, Property, Message, TrackView],
+        entities:[FeatureOption, Property, Message, TrackView, User],
         synchronize:true,
         url: configservice.get<string>('MONGO_URL')
       }),
@@ -30,7 +33,9 @@ import { TrackView } from './track-view/entities/track-view.entity';
     FileUploadModule,
     PropertiesModule,
     MessagesModule,
-    TrackViewModule
+    TrackViewModule,
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
