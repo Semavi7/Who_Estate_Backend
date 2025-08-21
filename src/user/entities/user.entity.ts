@@ -8,6 +8,8 @@ export class User {
     @Column() name: string
     @Column() surname: string
     @Column({ unique: true }) email: string
+    @Column() image: string
+    @Column() phonenumber: number
     @Exclude()@Column() password: string
-    @Column({ type: 'enum', enum: Role, default: [Role.Member] }) roles: Role[] 
+    @Column({ type: 'enum', enum: Role, default: Role.Member }) roles: Role 
 }

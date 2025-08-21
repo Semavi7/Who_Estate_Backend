@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -6,41 +6,80 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/auth/enums/role.enum';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
-  ){}
+    private readonly userRepository: Repository<User>,
+    private readonly fileUploadService: FileUploadService
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10)
     const newUser = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
-      roles: [Role.Member]
+      roles: Role.Member
     })
     return this.userRepository.save(newUser)
   }
 
-  async findOneByEmail(email: string): Promise<User | null>{
+  async findOneByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { email } })
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async uploadUserImage(id: string, file: Express.Multer.File): Promise<User> {
+    const user = await this.userRepository.findOneBy({_id: new ObjectId(id)})
+    if(!user){
+      throw new NotFoundException('Kullanıcı Bulunamadı')
+    }
+
+    const imageUrl = await this.fileUploadService.uplaodFile(file)
+    user.image = imageUrl
+    return this.userRepository.save(user)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findAll() {
+    return this.userRepository.find()
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOne(id: string) {
+    const user = await this.userRepository.findOneBy({_id: new ObjectId(id)})
+    if(!user){
+      throw new NotFoundException('Kullanıcı Bulunamadı')
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOneBy({_id: new ObjectId(id)})
+    if(!user){
+      throw new NotFoundException('Kullanıcı Bulunamadı')
+    }
+    for(const key in updateUserDto){
+      user[key] = updateUserDto[key]
+    }
+    return this.userRepository.save(user)
+  }
+
+  async updatePassword(id: string, oldPassword: string, newPassword: string): Promise<{ message: string }>{
+    const user = await this.userRepository.findOneBy({_id: new ObjectId(id)})
+    if(user && await bcrypt.compare(oldPassword, user.password)){
+      const hashedPassword = await bcrypt.hash(newPassword, 10)
+      user.password = hashedPassword
+      this.userRepository.save(user)
+      return { message: 'Kullanıcı şifresi değiştirildi' }
+    } 
+    return { message: 'Kullanıcı şifresi yanlış' }
+  }
+
+  async remove(id: string): Promise<{ message: string }> {
+    const result = await this.userRepository.delete(new ObjectId(id))
+    if (result.affected === 0) {
+      throw new NotFoundException('Böyle bir Id bulunamadı')
+    }
+    return { message: 'Kullanıcı başarı ile silindi' }
   }
 }

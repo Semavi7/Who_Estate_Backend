@@ -3,10 +3,12 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
+import * as cookieParser from 'cookie-parser';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule)
+  app.use(cookieParser())
   app.useGlobalPipes(new ValidationPipe({
     transform:true,
     whitelist:true
@@ -16,7 +18,14 @@ async function bootstrap() {
   app.useGlobalGuards(new JwtAuthGuard(reflector), new RolesGuard(reflector))
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector))
 
-  app.enableCors()
+  app.enableCors({
+    origin: 'http://localhost:3000', 
+    credentials: true
+  })
+  app.use((req, res, next) => {
+  console.log('Cookies:', req.headers.cookie);
+  next();
+})
   await app.listen(process.env.PORT ?? 3001)
 }
 bootstrap();

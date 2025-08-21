@@ -74,7 +74,7 @@ export class PropertiesController {
     return getCities()
   }
 
-  @Roles(Role.Admin, Role.Member)
+  @Public()
   @Get('lastsix')
   findLastSix() {
     return this.propertiesService.findLastSix()

@@ -6,6 +6,8 @@ export class LoginResponseDto {
   email: string
   name: string
   surname: string
+  phonenumber: number
+  role: string
 
   @Transform(({ value }) => value.toString(), { toPlainOnly: true }) _id: ObjectId
 }

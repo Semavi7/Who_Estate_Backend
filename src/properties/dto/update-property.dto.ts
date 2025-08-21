@@ -2,7 +2,7 @@ import { Type } from "class-transformer";
 import { IsJSON, IsOptional, IsNumber, IsString } from "class-validator";
 
 export class UpdatePropertyDto {
-     @IsString() @IsOptional() title?: string
+    @IsString() @IsOptional() title?: string
     @IsString() @IsOptional() description?: string
     @Type(() => Number) @IsNumber() @IsOptional() price?: number
     @Type(() => Number) @IsNumber() @IsOptional() gross?: number
