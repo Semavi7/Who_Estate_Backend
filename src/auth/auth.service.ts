@@ -15,7 +15,6 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any>{
     const user = await this.userService.findOneByEmail(email)
-    console.log('Kullanıcı bulundu mu:', user ? 'Evet' : 'Hayır');
     if(user && (await bcrypt.compare(pass, user.password))){
       const { password, ...result } = user
       return result
@@ -32,7 +31,8 @@ export class AuthService {
       name: user.name,
       surname: user.surname,
       phonenumber: user.phonenumber,
-      role: user.roles
+      role: user.roles,
+      image: user.image
     }
 
     return plainToClass(LoginResponseDto, responseObject)

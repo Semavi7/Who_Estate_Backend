@@ -11,7 +11,7 @@ export class FeatureOptionsController {
   constructor(private readonly featureOptionsService: FeatureOptionsService) {}
 
   @Post()
-  @Roles(Role.Admin, Role.Member)
+  @Roles(Role.Admin)
   create(@Body() createFeatureOptionDto: CreateFeatureOptionDto) {
     return this.featureOptionsService.create(createFeatureOptionDto);
   }
@@ -35,13 +35,13 @@ export class FeatureOptionsController {
   }
 
   @Put(':id')
-  @Roles(Role.Admin, Role.Member)
+  @Roles(Role.Admin)
   update(@Param('id') id: string, @Body() updateFeatureOptionDto: UpdateFeatureOptionDto) {
     return this.featureOptionsService.update(id, updateFeatureOptionDto);
   }
 
   @Delete(':id')
-  @Roles(Role.Admin, Role.Member)
+  @Roles(Role.Admin)
   remove(@Param('id') id: string) {
     return this.featureOptionsService.remove(id);
   }

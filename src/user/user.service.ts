@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -9,13 +9,33 @@ import { Role } from 'src/auth/enums/role.enum';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { ObjectId } from 'mongodb';
 
+
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly fileUploadService: FileUploadService
   ) { }
+
+  async onModuleInit() {
+    const adminEmail = 'reifyederya@gmail.com';
+    const adminExists = await this.findOneByEmail(adminEmail);
+
+    if (!adminExists) {
+      const hashedPassword = await bcrypt.hash('123456', 10);
+      const adminUser = this.userRepository.create({
+        email: adminEmail,
+        password: hashedPassword,
+        name: 'Refiye Derya',
+        surname: 'Gürses',
+        phonenumber: 5368100880,
+        roles: Role.Admin,
+      })
+      await this.userRepository.save(adminUser)
+      console.log('Admin user created successfully.')
+    }
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10)

@@ -22,6 +22,11 @@ export class UpdatePropertyDto {
     @Type(() => Number) @IsNumber() @IsOptional() dues?: number
     @IsString() @IsOptional() eligibleForLoan?: string
     @IsString() @IsOptional() titleDeedStatus?: string
+    @IsString() @IsOptional() userId?: string
+    @IsString() @IsOptional() userName?: string
+    @IsString() @IsOptional() userSurname?: string
+    @IsString() @IsOptional() userImage?: string
+    @Type(() => Number) @IsNumber() @IsOptional() userPhone?: number
     @IsJSON() @IsOptional() location?: string
     @IsString() @IsOptional() propertyType?: string
     @IsString() @IsOptional() listingType?: string

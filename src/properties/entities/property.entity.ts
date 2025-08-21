@@ -39,6 +39,12 @@ export class Property {
     @Column('simple-array') images: string[]
     @Column(type => Location) location: Location
 
+    @Column() userId: string
+    @Column() userName: string  
+    @Column() userSurname: string
+    @Column() userPhone: number
+    @Column() userImage: string
+
     @Column() propertyType: string
     @Column() listingType: string
     @Column() subType: string | null

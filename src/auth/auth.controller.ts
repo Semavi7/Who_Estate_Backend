@@ -28,7 +28,8 @@ export class AuthController {
       name: loginResult.name,
       surname: loginResult.surname,
       phonenumber: loginResult.phonenumber,
-      role: loginResult.role
+      role: loginResult.role,
+      image: loginResult.image
     }
     
     return response
