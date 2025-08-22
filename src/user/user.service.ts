@@ -33,7 +33,6 @@ export class UserService implements OnModuleInit {
         roles: Role.Admin,
       })
       await this.userRepository.save(adminUser)
-      console.log('Admin user created successfully.')
     }
   }
 
