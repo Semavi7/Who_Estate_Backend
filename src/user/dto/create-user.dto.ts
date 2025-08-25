@@ -6,5 +6,4 @@ export class CreateUserDto {
     @IsString() @IsNotEmpty() name: string
     @IsString() @IsNotEmpty() surname: string
     @Type(() => Number) @IsNumber() @IsNotEmpty() phonenumber: number
-    @IsString() @MinLength(6) @IsNotEmpty() password: string
 }

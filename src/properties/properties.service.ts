@@ -6,6 +6,7 @@ import { GeoPoint, Location, Property } from './entities/property.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PropertiesService implements OnModuleInit {
@@ -13,7 +14,8 @@ export class PropertiesService implements OnModuleInit {
   constructor(
     @InjectRepository(Property)
     private readonly propertyRepositories: MongoRepository<Property>,
-    private readonly fileUploadService: FileUploadService
+    private readonly fileUploadService: FileUploadService,
+    private readonly userService: UserService
   ) { }
 
   async onModuleInit() {
@@ -62,13 +64,14 @@ export class PropertiesService implements OnModuleInit {
       propertyType: createDto.propertyType,
       listingType: createDto.listingType,
       subType: createDto.subType,
-      selectedFeatures: selectedFeaturesData
+      selectedFeatures: selectedFeaturesData,
+      userId: createDto.userId
     })
     return this.propertyRepositories.save(newProperty)
   }
 
   async findAll(): Promise<Property[]> {
-    return this.propertyRepositories.find()
+    return await this.propertyRepositories.find()
   }
 
   async query(queryParams: any): Promise<Property[]> {
@@ -103,6 +106,10 @@ export class PropertiesService implements OnModuleInit {
   async findOne(id: string): Promise<Property> {
     const property = await this.propertyRepositories.findOneBy({ _id: new ObjectId(id) })
     if (!property) throw new NotFoundException('İlan Bulunamadı')
+    if (property.userId) {
+      const user = await this.userService.findOne(property.userId.toString());
+      (property as any).user = user
+    }
     return property
   }
 

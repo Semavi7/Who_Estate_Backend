@@ -1,12 +1,14 @@
-import { Transform } from "class-transformer";
-import { Column, CreateDateColumn, Entity, ObjectId, ObjectIdColumn, UpdateDateColumn } from "typeorm";
+import { Expose, Transform } from "class-transformer";
+import { ObjectId } from "mongodb";
+import { User } from "src/user/entities/user.entity";
+import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
 
-export class GeoPoint{
+export class GeoPoint {
     @Column() type: string = 'Point'
     @Column('double', { array: true }) coordinates: number[]
 }
 
-export class Location{
+export class Location {
     @Column() city: string
     @Column() district: string
     @Column() neighborhood: string
@@ -39,11 +41,7 @@ export class Property {
     @Column('simple-array') images: string[]
     @Column(type => Location) location: Location
 
-    @Column() userId: string
-    @Column() userName: string  
-    @Column() userSurname: string
-    @Column() userPhone: number
-    @Column() userImage: string
+    @Column() userId: ObjectId
 
     @Column() propertyType: string
     @Column() listingType: string

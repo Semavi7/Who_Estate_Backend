@@ -4,11 +4,13 @@ import { PropertiesController } from './properties.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Property } from './entities/property.entity';
 import { FileUploadModule } from 'src/file-upload/file-upload.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Property]),
-    FileUploadModule
+    FileUploadModule,
+    UserModule
   ],
   controllers: [PropertiesController],
   providers: [PropertiesService],

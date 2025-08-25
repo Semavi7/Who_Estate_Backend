@@ -37,7 +37,7 @@ export class UserService implements OnModuleInit {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10)
+    const hashedPassword = await bcrypt.hash('123456', 10)
     const newUser = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
@@ -70,6 +70,7 @@ export class UserService implements OnModuleInit {
     if(!user){
       throw new NotFoundException('Kullanıcı Bulunamadı')
     }
+    return user
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {

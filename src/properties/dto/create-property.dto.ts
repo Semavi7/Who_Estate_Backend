@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import { IsJSON, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { ObjectId } from "mongodb";
 
 export class CreatePropertyDto {
     @IsString() @IsNotEmpty() title: string
@@ -22,10 +23,7 @@ export class CreatePropertyDto {
     @Type(() => Number) @IsNumber() dues: number
     @IsString() @IsNotEmpty() eligibleForLoan: string
     @IsString() @IsNotEmpty() titleDeedStatus: string
-    @IsString() @IsNotEmpty() userId: string
-    @IsString() @IsNotEmpty() userName: string
-    @IsString() @IsNotEmpty() userSurname: string
-    @IsString() @IsNotEmpty() userImage: string
+    @Type(() => ObjectId) @IsOptional() userId?: ObjectId
     @Type(() => Number) @IsNumber() @IsOptional() userPhone: number
     @IsJSON() @IsNotEmpty() location: string
     @IsString() @IsNotEmpty() propertyType: string
