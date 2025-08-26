@@ -19,7 +19,7 @@ export class UserService implements OnModuleInit {
   ) { }
 
   async onModuleInit() {
-    const adminEmail = 'reifyederya@gmail.com';
+    const adminEmail = 'refiyederya@gmail.com';
     const adminExists = await this.findOneByEmail(adminEmail);
 
     if (!adminExists) {
