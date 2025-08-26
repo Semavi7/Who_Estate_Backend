@@ -1,6 +1,5 @@
 import { Expose, Transform } from "class-transformer";
 import { ObjectId } from "mongodb";
-import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
 
 export class GeoPoint {

@@ -7,12 +7,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { MailerModule } from 'src/mailer/mailer.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ResetToken } from './entities/reset-token.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([ResetToken]),
     UserModule,
     PassportModule,
     ConfigModule,
+    MailerModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

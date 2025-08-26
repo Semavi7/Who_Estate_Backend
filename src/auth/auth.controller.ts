@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Request, Res } from '@nestjs/common';
+import { Controller, Post, UseGuards, Request, Res, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Public } from './decorators/public.decorator';
@@ -33,5 +33,15 @@ export class AuthController {
     }
     
     return response
+  }
+
+  @Public()
+  @Post('forgot-password') forgot(@Body('email') email: string){
+    return this.authService.forgotPassword(email)
+  }
+
+  @Public()
+  @Post('reset-password') reset(@Body() body: { token: string, newPassword: string}){
+    return this.authService.resetPassword(body.token, body.newPassword)
   }
 }
