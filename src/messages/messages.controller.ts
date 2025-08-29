@@ -16,19 +16,19 @@ export class MessagesController {
   }
 
   @Get()
-  @Roles(Role.Admin, Role.Member)
+  @Roles(Role.Admin)
   findAll() {
     return this.messagesService.findAll();
   }
 
   @Get(':id')
-  @Roles(Role.Admin, Role.Member)
+  @Roles(Role.Admin)
   findOne(@Param('id') id: string) {
     return this.messagesService.findOne(id);
   }
 
   @Delete(':id')
-  @Roles(Role.Admin, Role.Member)
+  @Roles(Role.Admin)
   remove(@Param('id') id: string) {
     return this.messagesService.remove(id);
   }

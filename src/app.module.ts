@@ -17,6 +17,8 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './user/entities/user.entity';
 import { MailerModule } from './mailer/mailer.module';
 import { ResetToken } from './auth/entities/reset-token.entity';
+import { ClientIntakeModule } from './client-intake/client-intake.module';
+import { ClientIntake } from './client-intake/entities/client-intake.entity';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { ResetToken } from './auth/entities/reset-token.entity';
       imports:[ConfigModule],
       useFactory: (configservice:ConfigService) => ({
         type: 'mongodb',
-        entities:[FeatureOption, Property, Message, TrackView, User, ResetToken],
+        entities:[FeatureOption, Property, Message, TrackView, User, ResetToken, ClientIntake],
         synchronize:true,
         url: configservice.get<string>('MONGO_URL')
       }),
@@ -38,7 +40,8 @@ import { ResetToken } from './auth/entities/reset-token.entity';
     TrackViewModule,
     UserModule,
     AuthModule,
-    MailerModule
+    MailerModule,
+    ClientIntakeModule
   ],
   controllers: [AppController],
   providers: [AppService],
