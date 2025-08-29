@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UploadedFiles, UseInterceptors, Query, ParseFloatPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UploadedFiles, UseInterceptors, Query, ParseFloatPipe, Put, Patch } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
@@ -109,6 +109,12 @@ export class PropertiesController {
   @Roles(Role.Admin, Role.Member)
   remove(@Param('id') id: string) {
     return this.propertiesService.remove(id);
+  }
+
+  @Patch(':id')
+  @Roles(Role.Admin)
+  updateUserId(@Param('id') id: string, @Body('userId') userId: string) {
+    return this.propertiesService.updateUserId(id, userId)
   }
 
 }

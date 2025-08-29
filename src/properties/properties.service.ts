@@ -71,7 +71,20 @@ export class PropertiesService implements OnModuleInit {
   }
 
   async findAll(): Promise<Property[]> {
-    return await this.propertyRepositories.find()
+    const properties = await this.propertyRepositories.find()
+    const propertiesWithUsers = await Promise.all(properties.map(async (property) => {
+      if (property.userId) {
+        try {
+          const user = await this.userService.findOne(property.userId.toString());
+          (property as any).user = user
+        } catch (error) {
+          (property as any).user = null
+          console.warn(`Kullanıcı bulunamadı: ${property.userId} için ilan ID: ${property._id}`)
+        }
+      }
+      return property
+    }))
+    return propertiesWithUsers
   }
 
   async query(queryParams: any): Promise<Property[]> {
@@ -238,5 +251,16 @@ export class PropertiesService implements OnModuleInit {
         color: "#FF8042"
       }
     ]
+  }
+
+  async updateUserId(id: string, userId: string): Promise<any> {
+    const existingProperty = await this.propertyRepositories.findOneBy({ _id: new ObjectId(id) })
+    if (!existingProperty) {
+      throw new NotFoundException('Bu ıd ye ait kayıt bulunamadı')
+    }
+
+    existingProperty.userId = new ObjectId(userId)
+
+    return this.propertyRepositories.save(existingProperty)
   }
 }
