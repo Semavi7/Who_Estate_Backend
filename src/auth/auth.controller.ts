@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Public } from './decorators/public.decorator';
 import { Response } from 'express';
+import { LoginRequestDto } from './dto/login-request.dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +13,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiBody({ type: LoginRequestDto, description: 'Giriş yapmak için e-posta ve şifre' })
   async login(@Request() req, @Res({ passthrough: true }) res: Response) {
     const loginResult = await this.authService.login(req.user)
 

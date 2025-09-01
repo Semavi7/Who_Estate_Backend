@@ -8,7 +8,7 @@ import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('feature-options')
 export class FeatureOptionsController {
-  constructor(private readonly featureOptionsService: FeatureOptionsService) {}
+  constructor(private readonly featureOptionsService: FeatureOptionsService) { }
 
   @Post()
   @Roles(Role.Admin, Role.Member)
@@ -22,13 +22,13 @@ export class FeatureOptionsController {
     return this.featureOptionsService.findAllGrouped();
   }
 
-  @Public()
+  @Roles(Role.Admin, Role.Member)
   @Get('findall')
   findAll() {
     return this.featureOptionsService.findAll();
   }
 
-  @Public()
+  @Roles(Role.Admin, Role.Member)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.featureOptionsService.findOne(id);

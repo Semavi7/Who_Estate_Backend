@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureOptionsModule } from './feature-options/feature-options.module';
 import { FeatureOption } from './feature-options/entities/feature-option.entity';
@@ -42,8 +40,6 @@ import { ClientIntake } from './client-intake/entities/client-intake.entity';
     AuthModule,
     MailerModule,
     ClientIntakeModule
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+  ]
 })
 export class AppModule { }

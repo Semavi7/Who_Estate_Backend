@@ -32,4 +32,10 @@ export class MessagesController {
   remove(@Param('id') id: string) {
     return this.messagesService.remove(id);
   }
+
+  @Patch(':id')
+  @Roles(Role.Admin)
+  patchIsRead(@Param('id') id: string) {
+    return this.messagesService.patchIsRead(id)
+  }
 }

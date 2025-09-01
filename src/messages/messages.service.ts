@@ -41,4 +41,13 @@ export class MessagesService {
     }
     return { message: 'Mesaj başarı ile silindi' }
   }
+
+  async patchIsRead(id: string): Promise<Message> {
+    const findMessage = await this.messagesRepository.findOneBy({ _id: new ObjectId(id) })
+    if(!findMessage){
+      throw new NotFoundException('Mesaj Bulunamadı')
+    }
+    findMessage.isread = true
+    return this.messagesRepository.save(findMessage)
+  }
 }
