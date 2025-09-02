@@ -6,6 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/role.enum';
 import { UpdatePasswordDto } from './dto/update-userpassword.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
@@ -24,7 +25,7 @@ export class UserController {
     return this.userService.uploadUserImage(id, file)
   }
 
-  @Roles(Role.Admin, Role.Member)
+  @Public()
   @Get()
   findAll() {
     return this.userService.findAll()
