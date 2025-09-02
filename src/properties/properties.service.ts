@@ -170,10 +170,23 @@ export class PropertiesService implements OnModuleInit {
   }
 
   async findLastSix(): Promise<Property[]> {
-    return this.propertyRepositories.find({
+    const properties = await this.propertyRepositories.find({
       order: { createdAt: 'DESC' },
       take: 6
     })
+    const propertiesWithUsers = await Promise.all(properties.map(async (property) => {
+      if (property.userId) {
+        try {
+          const user = await this.userService.findOne(property.userId.toString());
+          (property as any).user = user
+        } catch (error) {
+          (property as any).user = null
+          console.warn(`Kullanıcı bulunamadı: ${property.userId} için ilan ID: ${property._id}`)
+        }
+      }
+      return property
+    }))
+    return propertiesWithUsers
   }
 
   async getCurrentYearListingStats(): Promise<{ month: string; count: number }[]> {
