@@ -23,7 +23,7 @@ export class CreatePropertyDto {
     @Type(() => Number) @IsNumber() dues: number
     @IsString() @IsNotEmpty() eligibleForLoan: string
     @IsString() @IsNotEmpty() titleDeedStatus: string
-    @Type(() => ObjectId) @IsOptional() userId?: ObjectId
+    @IsString() @IsOptional() userId?: string
     @Type(() => Number) @IsNumber() @IsOptional() userPhone: number
     @IsJSON() @IsNotEmpty() location: string
     @IsString() @IsNotEmpty() propertyType: string

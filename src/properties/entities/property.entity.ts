@@ -40,7 +40,7 @@ export class Property {
     @Column('simple-array') images: string[]
     @Column(type => Location) location: Location
 
-    @Column() userId: ObjectId
+    @Column() userId: string
 
     @Column() propertyType: string
     @Column() listingType: string

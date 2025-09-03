@@ -272,7 +272,7 @@ export class PropertiesService implements OnModuleInit {
       throw new NotFoundException('Bu ıd ye ait kayıt bulunamadı')
     }
 
-    existingProperty.userId = new ObjectId(userId)
+    existingProperty.userId = userId
 
     return this.propertyRepositories.save(existingProperty)
   }
