@@ -19,7 +19,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document)
-  
+
   app.use(cookieParser())
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
@@ -31,9 +31,10 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector))
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: process.env.NODE_ENV === 'production' ? 'https://app.onlineticariotomasyon.org.tr' : 'http://localhost:3000' ,
     credentials: true
   })
   await app.listen(process.env.PORT ?? 3001)
 }
 bootstrap();
+

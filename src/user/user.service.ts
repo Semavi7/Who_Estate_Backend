@@ -56,7 +56,7 @@ export class UserService implements OnModuleInit {
       throw new NotFoundException('Kullanıcı Bulunamadı')
     }
 
-    const imageUrl = await this.fileUploadService.uplaodFile(file)
+    const imageUrl = await this.fileUploadService.uplaodFile(file, false)
     user.image = imageUrl
     return this.userRepository.save(user)
   }

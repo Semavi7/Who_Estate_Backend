@@ -19,10 +19,11 @@ export class AuthController {
 
     res.cookie('accessToken', loginResult.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'development',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: 1000 * 60 * 60,
-      path: '/' 
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? '.onlineticariotomasyon.org.tr' : ''
     })
 
     const response = {
@@ -34,17 +35,17 @@ export class AuthController {
       role: loginResult.role,
       image: loginResult.image
     }
-    
+
     return response
   }
 
   @Public()
-  @Post('forgot-password') forgot(@Body('email') email: string){
+  @Post('forgot-password') forgot(@Body('email') email: string) {
     return this.authService.forgotPassword(email)
   }
 
   @Public()
-  @Post('reset-password') reset(@Body() body: { token: string, newPassword: string}){
+  @Post('reset-password') reset(@Body() body: { token: string, newPassword: string }) {
     return this.authService.resetPassword(body.token, body.newPassword)
   }
 }

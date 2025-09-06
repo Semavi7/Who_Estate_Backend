@@ -22,7 +22,7 @@ export class PropertiesController {
   @UseInterceptors(FilesInterceptor('images', 20))
   async create(@Body() createDto: CreatePropertyDto, @UploadedFiles() files: Array<Express.Multer.File>) {
     const imageUrls = await Promise.all(
-      files.map(file => this.fileUploadService.uplaodFile(file))
+      files.map(file => this.fileUploadService.uplaodFile(file, true))
     )
     return this.propertiesService.create(createDto, imageUrls);
   }

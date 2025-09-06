@@ -134,7 +134,7 @@ export class PropertiesService implements OnModuleInit {
     }
 
     const keptImageUrls = updateDto.existingImageUrls ? JSON.parse(updateDto.existingImageUrls) : []
-    const newImageUrls = newFiles ? await Promise.all(newFiles.map(file => this.fileUploadService.uplaodFile(file))) : []
+    const newImageUrls = newFiles ? await Promise.all(newFiles.map(file => this.fileUploadService.uplaodFile(file, true))) : []
     const finalImageUrls = [...keptImageUrls, ...newImageUrls]
     existingProperty.images = finalImageUrls
 
