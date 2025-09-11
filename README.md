@@ -23,28 +23,42 @@ Proje, NestJS'in modüler tasarım desenini temel alır. Her bir işlevsel alan,
 - **DTOs (Data Transfer Objects)**: API istek ve yanıt gövdelerinin yapısını ve doğrulama kurallarını tanımlar. `class-validator` ve `class-transformer` kütüphaneleri ile kullanılır.
 - **Guards**: Kimlik doğrulama (`JwtAuthGuard`) ve yetkilendirme (`RolesGuard`) gibi güvenlik katmanlarını uygular. Gelen isteklerin işlenip işlenemeyeceğine karar verir.
 
-## Çekirdek Modüllerin Açıklaması
+## Çekirdek Modüllerin Detaylı Analizi
 
-- **`AuthModule`**: Kullanıcı kimlik doğrulama ve yetkilendirme işlemlerinden sorumludur.
-  - `local` stratejisi ile kullanıcı girişi.
-  - `jwt` stratejisi ile API isteklerinin korunması.
-  - Rol tabanlı yetkilendirme için `RolesGuard`.
-  - Şifre sıfırlama token yönetimi.
-  - **Güvenlik**: Başarılı giriş sonrası JWT, response body yerine `HttpOnly` bir cookie olarak setlenir. Bu, tarayıcı tabanlı XSS saldırılarına karşı koruma sağlar.
+Bu bölümde, projenin ana modülleri ve bu modüllerin içerdiği CRUD dışı, özel iş mantıkları detaylandırılmıştır.
 
-- **`UserModule`**: Kullanıcı verilerinin yönetimi (CRUD işlemleri) için gerekli altyapıyı sağlar.
+- **`AuthModule`**: Standart kimlik doğrulamanın ötesinde, gelişmiş güvenlik ve kullanıcı kurtarma mekanizmaları sunar.
+  - **Endpoint'ler**:
+    - `POST /auth/login`: Kullanıcı girişi yapar. Response body'de kullanıcı bilgilerini dönerken, JWT'yi güvenlik amacıyla `HttpOnly` ve `Secure` bir cookie (`accessToken`) olarak setler.
+    - `POST /auth/forgot-password`: Kullanıcının e-posta adresine şifre sıfırlama linki gönderir. Güvenli, tek kullanımlık bir token oluşturur, hash'leyerek veritabanına kaydeder ve kullanıcıya e-posta ile gönderir.
+    - `POST /auth/reset-password`: Gelen token'ı veritabanındaki hash ile karşılaştırır, geçerliliğini ve süresini kontrol eder, ardından kullanıcının şifresini günceller.
 
-- **`PropertiesModule`**: Projenin ana modülüdür. Emlak ilanlarının oluşturulması, güncellenmesi, silinmesi ve filtrelenerek listelenmesi gibi işlemleri yönetir.
+- **`UserModule`**: Temel kullanıcı yönetiminin yanı sıra, sisteme hazırlık ve kullanıcı etkileşimi özelliklerini içerir.
+  - **Servis Mantığı**:
+    - `onModuleInit`: Uygulama başladığında, veritabanında bir admin kullanıcısı olup olmadığını kontrol eder. Eğer yoksa, varsayılan bilgilerle bir admin kullanıcısı oluşturarak sistemin ilk kurulumunu kolaylaştırır.
+  - **Endpoint'ler**:
+    - `PATCH /user/:id/upload-image`: Kullanıcının profil resmini yüklemesini sağlar. Gelen dosyayı `FileUploadService` aracılığıyla bulut depolama alanına yükler ve URL'i kullanıcı entity'sine kaydeder.
+    - `PATCH /user/:id/password`: Mevcut kullanıcının şifresini değiştirmesi için özel bir endpoint sunar. Güvenlik için eski şifrenin doğruluğunu kontrol eder.
 
-- **`FileUploadModule`**: Özellikle emlak ilanlarına ait görsellerin Google Cloud Storage'a yüklenmesi ve yönetilmesinden sorumludur.
+- **`PropertiesModule`**: Projenin en karmaşık ve zengin işlevselliğe sahip modülüdür.
+  - **Servis Mantığı**:
+    - `onModuleInit`: MongoDB üzerinde `location.geo` alanı için bir `2dsphere` indeksi oluşturur. Bu, verimli coğrafi sorgular yapılabilmesini sağlar.
+    - `create` ve `update`: `multipart/form-data` olarak gelen verileri işler. Birden fazla resim dosyasını eş zamanlı olarak (`Promise.all`) buluta yükler. `location` ve `selectedFeatures` gibi JSON formatındaki DTO alanlarını parse eder.
+  - **Endpoint'ler**:
+    - `GET /properties/query`: Gelen query parametrelerine göre dinamik ve karmaşık filtreleme yapar. Fiyat/alan aralığı (`minPrice`, `maxNet`), konum (`city`, `district`) ve diğer ilan özelliklerine göre arama imkanı sunar.
+    - `GET /properties/near`: Belirtilen enlem ve boylama, belirli bir mesafe (metre cinsinden) içindeki ilanları coğrafi olarak sorgular (`$nearSphere`).
+    - `GET /properties/lastsix`: Ana sayfada gösterilmek üzere en son eklenen 6 ilanı getirir.
+    - `GET /properties/yearlistings`: MongoDB Aggregation Pipeline kullanarak mevcut yıldaki ilanların aylara göre dağılımını hesaplar ve istatistiksel veri sunar.
+    - `GET /properties/piechart`: Yine Aggregation kullanarak, ilanların alt tiplerine (Daire, Villa vb.) göre yüzdelik dağılımını hesaplar ve dashboard için veri sağlar.
+    - `PATCH /properties/:id`: (Admin-Only) Bir ilanın sahibini (userId) değiştirme imkanı sunar.
 
-- **`MessagesModule`**: Kullanıcılar arasında veya kullanıcı ile sistem arasında gerçekleşen mesajlaşma altyapısını yönetir.
+- **`MessagesModule`**: Standart mesajlaşma işlevlerine ek olarak durum yönetimi içerir.
+  - **Endpoint'ler**:
+    - `PATCH /messages/:id`: Bir mesajın `isread` durumunu `true` olarak günceller, yani "okundu" olarak işaretler.
 
-- **`ClientIntakeModule`**: Potansiyel müşteri taleplerinin (örneğin, "beni ara" formları) sisteme kaydedilmesi ve yönetilmesini sağlar.
+- **`ClientIntakeModule`**: Müşteri taleplerini yönetmek için standart CRUD operasyonları sunar.
 
-- **`TrackViewModule`**: Emlak ilanlarının görüntülenme sayılarını takip eder.
-
-- **`FeatureOptionsModule`**: Emlak ilanları için "oda sayısı", "ısıtma tipi" gibi dinamik ve yönetilebilir özellik seçeneklerini barındırır.
+- **`FileUploadModule`**: Diğer modüllere servis sağlayan, dosyaları (özellikle resimleri) Google Cloud Storage'a yüklemekten ve URL'lerini döndürmekten sorumlu modüldür.
 
 ## Veritabanı Yapısı
 
