@@ -11,9 +11,15 @@ export class FileUploadService {
     private readonly logger = new Logger(FileUploadService.name)
 
     constructor(private configService: ConfigService) {
-        this.storage = new Storage({
-            keyFilename: this.configService.get<string>('GCS_KEYFILE_PATH')
-        })
+        const isDevelopment = process.env.NODE_ENV === 'production'
+        if (isDevelopment) {
+            this.storage = new Storage()
+        }
+        else {
+            this.storage = new Storage({
+                keyFilename: this.configService.get<string>('GCS_KEYFILE_PATH')
+            })
+        }
         const bucketNameFromConfig = this.configService.get<string>('GCS_BUCKET_NAME')
         if (!bucketNameFromConfig) {
             throw new Error('GCS_BUCKET_NAME environment variable is not set!')
