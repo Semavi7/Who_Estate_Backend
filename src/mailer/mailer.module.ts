@@ -20,6 +20,9 @@ import { MailService } from './mailer.service';
                         pass: config.get<string>('SMTP_PASS')
                     },
                 },
+                defaults: {
+                    from: config.get<string>('MAIL_FROM')
+                },
                 template: {
                     dir: join(__dirname, 'templates'),
                     adapter: new HandlebarsAdapter(),

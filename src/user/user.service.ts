@@ -19,11 +19,11 @@ export class UserService implements OnModuleInit {
   ) { }
 
   async onModuleInit() {
-    const adminEmail = 'refiyederya@gmail.com';
+    const adminEmail = 'refiyederyaakgun@gmail.com';
     const adminExists = await this.findOneByEmail(adminEmail);
 
     if (!adminExists) {
-      const hashedPassword = await bcrypt.hash('123456', 10);
+      const hashedPassword = await bcrypt.hash('337044', 10);
       const adminUser = this.userRepository.create({
         email: adminEmail,
         password: hashedPassword,

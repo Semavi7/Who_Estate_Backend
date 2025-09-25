@@ -23,7 +23,7 @@ export class AuthController {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: 1000 * 60 * 60,
       path: '/',
-      domain: process.env.NODE_ENV === 'production' ? '.onlineticariotomasyon.org.tr' : ''
+      domain: process.env.NODE_ENV === 'production' ? '.deryaemlak.co' : ''
     })
 
     const response = {

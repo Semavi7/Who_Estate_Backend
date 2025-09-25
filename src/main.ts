@@ -31,7 +31,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector))
 
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' ? 'https://app.onlineticariotomasyon.org.tr' : 'http://localhost:3000' ,
+    origin: process.env.NODE_ENV === 'production' ? 'https://www.deryaemlak.co' : 'http://localhost:3000' ,
     credentials: true
   })
   await app.listen(process.env.PORT ?? 3001)

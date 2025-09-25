@@ -109,4 +109,4 @@ Bu proje, Google Cloud Platform (GCP) üzerinde sunucusuz (serverless) bir mimar
 1.  **Dockerize Etme:** Proje, bir `Dockerfile` kullanılarak bir Docker imajı haline getirilir.
 2.  **Google Artifact Registry'e Yükleme:** Oluşturulan Docker imajı, Google Artifact Registry'e push edilir.
 3.  **Google Cloud Run Servisi:** Google Cloud Run, Artifact Registry'deki imajı kullanarak uygulamayı çalıştırır ve gelen isteklere göre otomatik olarak ölçeklenir.
-4.  **Subdomain Bağlama:** Cloud Run servisine özel bir subdomain bağlanarak uygulamanın internet üzerinden erişilebilir olması sağlanır.
+4.  **Subdomain Bağlama:** Cloud Run servisine özel bir subdomain bağlanarak uygulamanın internet üzerinden erişilebilir olması sağlanır. https://www.deryaemlak.co/
